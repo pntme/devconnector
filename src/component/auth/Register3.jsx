@@ -1,9 +1,12 @@
-import axios from "axios";
 import React, { Fragment, useState } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { register } from "../../redux/actions/authAction";
 import { Link } from "react-router-dom";
+import { setAlert } from "../../redux/actions/alertAction";
 
-export const Register2 = () => {
-  const [formData, setformData] = useState({
+const Register3 = ({ register, setAlert, isAuthenticated }) => {
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
@@ -11,35 +14,19 @@ export const Register2 = () => {
   });
 
   const { name, email, password, password2 } = formData;
-
   const onChange = (e) => {
-    setformData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    // console.log(formData);
-    // const api = "/api/users";
-
-    // axios
-    //   .post(api, formData)
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.response);
-    //     const errObject = {};
-    //     for (const e of err.response.data.errors) {
-    //       if (e.param === "name") errObject.name = e.msg;
-    //       if (e.param === "email") errObject.email = e.msg;
-    //       if (e.param === "password") errObject.password = e.msg;
-    //     }
-    //     console.log(errObject);
-    //   });
+    if (password !== password2) {
+      // we need to raise the passwords do n't match error (alert )
+    }
+    register({ name, email, password });
+    // consumed the action.
   };
-
   return (
     <Fragment>
       <h1 className="large text-primary">Sign Up</h1>
@@ -101,3 +88,20 @@ export const Register2 = () => {
     </Fragment>
   );
 };
+// if isAuthenticated status is not null that mns user is already logged in.
+// ===> do we need to redirect that user to dashboard.
+
+Register3.propTypes = {
+  register: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
+  // this is the action which is required to complete the work.
+};
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+const mapDispatchToProps = { register, setAlert };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register3);
